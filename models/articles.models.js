@@ -65,3 +65,27 @@ exports.selectArticles = (sortBy = "created_at", orderBy = "DESC", topic) => {
       return rows;
     });
 };
+
+exports.selectCommentsByArticleId = (commentArticleId) => {
+  return db
+    .query(
+      `SELECT comment_id, votes, created_at, author, body FROM comments
+    WHERE article_id = $1;`,
+      [commentArticleId]
+    )
+    .then((comments) => {
+      return comments.rows;
+    });
+};
+
+exports.createCommentByArticleId = (author, body, commentArticleId) => {
+  return db
+    .query(
+      `INSERT INTO comments (author, body, article_id) 
+    VALUES($1,$2,$3) RETURNING *;`,
+      [author, body, commentArticleId]
+    )
+    .then((comment) => {
+      return comment.rows[0];
+    });
+};

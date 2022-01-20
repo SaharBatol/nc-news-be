@@ -90,46 +90,46 @@ describe("/api/articles/:article_id", () => {
           });
         });
     });
-  });
-  test("Return status code 201, decrement votes by 10 and returns an object", () => {
-    const decreaseVotes = { inc_votes: -10 };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(decreaseVotes)
-      .expect(201)
-      .then(({ body }) => {
-        expect(typeof body).toBe("object");
-        expect(body.result).toEqual({
-          article_id: 1,
-          title: "Living in the shadow of a great man",
-          body: "I find this existence challenging",
-          votes: 90,
-          author: "butter_bridge",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
+    test("Return status code 201, decrement votes by 10 and returns an object", () => {
+      const decreaseVotes = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(decreaseVotes)
+        .expect(201)
+        .then(({ body }) => {
+          expect(typeof body).toBe("object");
+          expect(body.result).toEqual({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            body: "I find this existence challenging",
+            votes: 90,
+            author: "butter_bridge",
+            topic: "mitch",
+            created_at: "2020-07-09T20:11:00.000Z",
+          });
         });
-      });
-  });
-  test("Return status code 404 if article_id is valid but not found", () => {
-    const decreaseVotes = { inc_votes: -10 };
-    return request(app)
-      .patch("/api/articles/300000")
-      .send(decreaseVotes)
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Not found");
-      });
-  });
+    });
+    test("Return status code 404 if article_id is valid but not found", () => {
+      const decreaseVotes = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/300000")
+        .send(decreaseVotes)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
 
-  test("Return status code 400 if article_id is invalid", () => {
-    const decreaseVotes = { inc_votes: -10 };
-    return request(app)
-      .patch("/api/articles/a")
-      .send(decreaseVotes)
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
-      });
+    test("Return status code 400 if article_id is invalid", () => {
+      const decreaseVotes = { inc_votes: -10 };
+      return request(app)
+        .patch("/api/articles/a")
+        .send(decreaseVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
   });
 });
 
@@ -232,5 +232,101 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("not found");
       });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("Return status code 200 with an array of comments for the given article id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(typeof body).toBe("object");
+          body.comments.forEach((comment) => {
+            expect(comment).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              body: expect.any(String),
+              author: expect.any(String),
+            });
+          });
+        });
+    });
+
+    test("Return status code 404 if article_id is valid but not found", () => {
+      return request(app)
+        .get("/api/articles/3000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+  });
+
+  describe("POST", () => {
+    test("Return status code 201 with the new comment", () => {
+      const newComment = { username: "butter_bridge", body: "a new comment" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            body: "a new comment",
+            author: "butter_bridge",
+            article_id: 1,
+          });
+        });
+    });
+    test("Return status code 404 if article_id is valid but not found", () => {
+      return request(app)
+        .post("/api/articles/3000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+
+    test("Return status code 404 if username is valid but not found", () => {
+      const newComment = { username: "masaala", body: "a new comment" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not found");
+        });
+    });
+  });
+});
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    test("Returns status code 204 and deletes comment", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then((res) => {
+          expect(res.body).toEqual({});
+        });
+    });
+  });
+});
+
+describe("/api", () => {
+  describe("GET", () => {
+    test("Returns status code 200 and displays json contents", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then((res) => {
+          expect(typeof res.body.fileContents).toBe("string");
+        });
+    });
   });
 });

@@ -12,6 +12,18 @@ exports.checkArticleExists = (articleId) => {
     });
 };
 
+exports.checkAuthorExists = (author) => {
+  return db
+    .query(`SELECT * FROM users WHERE username = $1`, [author])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+};
+
 exports.checkTopicExists = (topicCheck) => {
   return db.query(`SELECT topic FROM articles`).then((topics) => {
     if (!topicCheck) {

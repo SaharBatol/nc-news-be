@@ -2,8 +2,14 @@ const {
   selectArticleById,
   updateArticleById,
   selectArticles,
+  selectCommentsByArticleId,
+  createCommentByArticleId,
 } = require("../models/articles.models");
-const { checkArticleExists, checkTopicExists } = require("../utils/utils");
+const {
+  checkArticleExists,
+  checkTopicExists,
+  checkAuthorExists,
+} = require("../utils/utils");
 
 exports.getArticleById = (req, res, next) => {
   const article_id = req.params.article_id;
@@ -51,6 +57,52 @@ exports.getArticles = (req, res, next) => {
         });
       } else {
         return Promise.reject({ status: 404, msg: "not found" });
+      }
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const commentArticleId = req.params.article_id;
+  return checkArticleExists(commentArticleId)
+    .then((articleExists) => {
+      if (articleExists) {
+        return selectCommentsByArticleId(commentArticleId).then((comments) => {
+          return res.status(200).send({ comments });
+        });
+      } else {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentsByArticleId = (req, res, next) => {
+  const author = req.body.username;
+  const body = req.body.body;
+  const commentArticleId = req.params.article_id;
+  return checkArticleExists(commentArticleId)
+    .then((articleExists) => {
+      if (articleExists) {
+        return checkAuthorExists(author).then((userExists) => {
+          if (userExists) {
+            return createCommentByArticleId(
+              author,
+              body,
+              commentArticleId
+            ).then((comment) => {
+              return res.status(201).send({ comment });
+            });
+          } else {
+            return Promise.reject({ status: 404, msg: "Not found" });
+          }
+        });
+      } else {
+        return Promise.reject({ status: 404, msg: "Not found" });
       }
     })
     .catch((err) => {

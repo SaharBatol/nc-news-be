@@ -1,4 +1,5 @@
 const express = require("express");
+const { getApi } = require("./controllers/api.controllers");
 const {
   handle404s,
   handleServerErrors,
@@ -11,6 +12,7 @@ const app = express();
 
 app.use(express.json());
 
+app.get("/api", getApi);
 app.use("/api", apiRouter);
 
 app.all("*", handle404s);
