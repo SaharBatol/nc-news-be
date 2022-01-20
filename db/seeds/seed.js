@@ -69,28 +69,28 @@ const seed = (data) => {
     })
     .then(() => {
       const topicSQL = format(
-        `INSERT INTO topics(slug, description) VALUES %L RETURNING *;`,
+        `INSERT INTO topics(slug, description) VALUES %L;`,
         formatTopicData(topicData)
       );
       return db.query(topicSQL);
     })
     .then(() => {
       const userSQL = format(
-        `INSERT INTO users(username, avatar_url, name) VALUES %L RETURNING *;`,
+        `INSERT INTO users(username, avatar_url, name) VALUES %L;`,
         formatUserData(userData)
       );
       return db.query(userSQL);
     })
     .then(() => {
       const articleSQL = format(
-        `INSERT INTO articles(title, body, votes, topic, author, created_at) VALUES %L RETURNING *;`,
+        `INSERT INTO articles(title, body, votes, topic, author, created_at) VALUES %L;`,
         formatArticleData(articleData)
       );
       return db.query(articleSQL);
     })
     .then(() => {
       const commentsSQL = format(
-        `INSERT INTO comments(author, article_id, votes, created_at, body) VALUES %L RETURNING *;`,
+        `INSERT INTO comments(author, article_id, votes, created_at, body) VALUES %L;`,
         formatCommentData(commentData)
       );
       return db.query(commentsSQL);
