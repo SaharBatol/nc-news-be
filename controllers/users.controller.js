@@ -1,4 +1,3 @@
-const { selectCommentsByArticleId } = require("../models/articles.models");
 const { selectUsers, selectUserByUsername } = require("../models/users.models");
 const { checkUserExists } = require("../utils/utils");
 
