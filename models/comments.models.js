@@ -9,3 +9,15 @@ exports.removeCommentById = (commentId) => {
       return comment.rows[0];
     });
 };
+
+exports.updateCommentById = (commentId, changeVotes) => {
+  return db
+    .query(
+      `UPDATE comments SET votes = votes 
+      + $2 WHERE comment_id = $1 RETURNING *;`,
+      [commentId, changeVotes]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};

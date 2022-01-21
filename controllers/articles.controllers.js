@@ -12,11 +12,11 @@ const {
 } = require("../utils/utils");
 
 exports.getArticleById = (req, res, next) => {
-  const article_id = req.params.article_id;
-  return checkArticleExists(article_id)
+  const articleId = req.params.article_id;
+  return checkArticleExists(articleId)
     .then((articleExists) => {
       if (articleExists) {
-        return selectArticleById(article_id).then((article) => {
+        return selectArticleById(articleId).then((article) => {
           return res.status(200).send({ article });
         });
       } else {
@@ -28,12 +28,12 @@ exports.getArticleById = (req, res, next) => {
     });
 };
 exports.patchArticleById = (req, res, next) => {
-  const article_id = req.params.article_id;
+  const articleId = req.params.article_id;
   const changeAmount = req.body.inc_votes;
-  return checkArticleExists(article_id)
+  return checkArticleExists(articleId)
     .then((articleExists) => {
       if (articleExists) {
-        return updateArticleById(article_id, changeAmount).then((result) => {
+        return updateArticleById(articleId, changeAmount).then((result) => {
           return res.status(201).send({ result });
         });
       } else {

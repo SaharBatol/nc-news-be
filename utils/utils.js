@@ -12,6 +12,18 @@ exports.checkArticleExists = (articleId) => {
     });
 };
 
+exports.checkUserExists = (username) => {
+  return db
+    .query(`SELECT username FROM users WHERE username = $1`, [username])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+};
+
 exports.checkAuthorExists = (author) => {
   return db
     .query(`SELECT * FROM users WHERE username = $1`, [author])
@@ -38,4 +50,16 @@ exports.checkTopicExists = (topicCheck) => {
       });
     }
   });
+};
+
+exports.checkCommentExists = (commentId) => {
+  return db
+    .query(`SELECT * FROM comments WHERE comment_id = $1`, [commentId])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return true;
+      } else {
+        return false;
+      }
+    });
 };
