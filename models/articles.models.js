@@ -25,7 +25,12 @@ exports.updateArticleById = (articleId, changeVotes) => {
     });
 };
 
-exports.selectArticles = (sortBy = "created_at", orderBy = "DESC", topic) => {
+exports.selectArticles = (
+  sortBy = "created_at",
+  orderBy = "DESC",
+  topic,
+  limit = 10
+) => {
   let topicCondition = false;
   if (!topic) {
     topicCondition = true;
@@ -58,7 +63,8 @@ exports.selectArticles = (sortBy = "created_at", orderBy = "DESC", topic) => {
       ON articles.article_id = comments.article_id
       WHERE ${topicCondition} OR topic = $1
       GROUP BY articles.article_id
-      ORDER BY ${sortBy} ${orderBy};`,
+      ORDER BY ${sortBy} ${orderBy}
+      LIMIT ${limit};`,
       [topic]
     )
     .then(({ rows }) => {

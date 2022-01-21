@@ -233,6 +233,14 @@ describe("/api/articles", () => {
         expect(body.msg).toBe("not found");
       });
   });
+  test("Return status code 400 and a display 2 articles according to query limit", () => {
+    return request(app)
+      .get("/api/articles?limit=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(2);
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {

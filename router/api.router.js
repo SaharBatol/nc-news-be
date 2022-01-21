@@ -3,7 +3,7 @@ const articlesRouter = require("./articles.router");
 const commentsRouter = require("./comments.router");
 const { getTopics } = require("../controllers/topics.controllers");
 const { getArticles } = require("../controllers/articles.controllers");
-const { getUsers } = require("../controllers/users.controller");
+const { getUsers } = require("../controllers/users.controllers");
 const userRouter = require("./users.router");
 
 const apiRouter = express.Router();

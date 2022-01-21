@@ -49,12 +49,15 @@ exports.getArticles = (req, res, next) => {
   const sortBy = req.query.sort_by;
   const orderBy = req.query.order_by;
   const topic = req.query.topic;
+  const limit = req.query.limit;
   return checkTopicExists(topic)
     .then((exists) => {
       if (exists) {
-        return selectArticles(sortBy, orderBy, topic).then((articles) => {
-          res.status(200).send({ articles });
-        });
+        return selectArticles(sortBy, orderBy, topic, limit).then(
+          (articles) => {
+            res.status(200).send({ articles });
+          }
+        );
       } else {
         return Promise.reject({ status: 404, msg: "not found" });
       }
