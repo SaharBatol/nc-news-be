@@ -4,7 +4,7 @@ exports.selectArticleById = (articleId) => {
   return db
     .query(
       `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
-      FROM articles INNER JOIN comments ON articles.article_id = comments.article_id
+      FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
       WHERE articles.article_id = $1 GROUP BY articles.article_id;`,
       [articleId]
     )
@@ -59,7 +59,7 @@ exports.selectArticles = (
     .query(
       `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
       FROM articles
-      INNER JOIN comments
+      LEFT JOIN comments
       ON articles.article_id = comments.article_id
       WHERE ${topicCondition} OR topic = $1
       GROUP BY articles.article_id

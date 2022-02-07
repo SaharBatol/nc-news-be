@@ -233,7 +233,7 @@ describe("/api/articles", () => {
         expect(body.msg).toBe("not found");
       });
   });
-  test("Return status code 400 and a display 2 articles according to query limit", () => {
+  test("Return status code 200 and a display 2 articles according to query limit", () => {
     return request(app)
       .get("/api/articles?limit=2")
       .expect(200)
@@ -426,7 +426,7 @@ describe("/api/users/:username", () => {
           });
         });
     });
-    test("Return status code 400 if username is not valid", () => {
+    test("Return status code 404 if username is not valid", () => {
       return request(app)
         .get("/api/users/notAValidUserName")
         .expect(404)
