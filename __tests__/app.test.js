@@ -155,160 +155,170 @@ describe("/api/articles", () => {
           });
         });
     });
-  });
-  test("Return status code 200 and is sorted by date as default", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.articles).toBeSortedBy("created_at", {
-          descending: true,
-        });
-      });
-  });
 
-  test("Return status code 200 and is sorted by article_id", () => {
-    return request(app)
-      .get("/api/articles?sort_by=article_id")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSortedBy("article_id", {
-          descending: true,
-        });
-      });
-  });
-
-  test("Return status code 200 and is ordered by desc as default", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSorted({ descending: true });
-      });
-  });
-
-  test("Return status code 200 and is ordered by asc", () => {
-    return request(app)
-      .get("/api/articles?order_by=ASC")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSorted({ ascending: true });
-      });
-  });
-
-  test("Return status code 200 and display topics of cats", () => {
-    return request(app)
-      .get("/api/articles?topic=cats")
-      .expect(200)
-      .then(({ body }) => {
-        body.articles.forEach((article) => {
-          expect(article.topic).toBe("cats");
-        });
-      });
-  });
-
-  test("Return status code 400 when provided wrong order_by url", () => {
-    return request(app)
-      .get("/api/articles?order_by=wrong")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
-      });
-  });
-
-  test("Return status code 400 when provided wrong sort_by url", () => {
-    return request(app)
-      .get("/api/articles?sort_by=colummn")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
-      });
-  });
-
-  test("Return status code 400 when provided wrong topic", () => {
-    return request(app)
-      .get("/api/articles?topic=newtopic")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("not found");
-      });
-  });
-  test("Return status code 200 and a display 2 articles according to query limit", () => {
-    return request(app)
-      .get("/api/articles?limit=2")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.articles.length).toBe(2);
-      });
-  });
-});
-
-describe("/api/articles/:article_id/comments", () => {
-  describe("GET", () => {
-    test("Return status code 200 with an array of comments for the given article id", () => {
+    test("Return status code 200 and is sorted by date as default", () => {
       return request(app)
-        .get("/api/articles/1/comments")
+        .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
-          expect(typeof body).toBe("object");
-          body.comments.forEach((comment) => {
-            expect(comment).toMatchObject({
+          expect(body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+
+    test("Return status code 200 and is sorted by article_id", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("article_id", {
+            descending: true,
+          });
+        });
+    });
+
+    test("Return status code 200 and is ordered by desc as default", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSorted({ descending: true });
+        });
+    });
+
+    test("Return status code 200 and is ordered by asc", () => {
+      return request(app)
+        .get("/api/articles?order_by=ASC")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSorted({ ascending: true });
+        });
+    });
+
+    test("Return status code 200 and display topics of cats", () => {
+      return request(app)
+        .get("/api/articles?topic=cats")
+        .expect(200)
+        .then(({ body }) => {
+          body.articles.forEach((article) => {
+            expect(article.topic).toBe("cats");
+          });
+        });
+    });
+
+    test("Return status code 400 when provided wrong order_by url", () => {
+      return request(app)
+        .get("/api/articles?order_by=wrong")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+
+    test("Return status code 400 when provided wrong sort_by url", () => {
+      return request(app)
+        .get("/api/articles?sort_by=colummn")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad request");
+        });
+    });
+
+    test("Return status code 400 when provided wrong topic", () => {
+      return request(app)
+        .get("/api/articles?topic=newtopic")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("not found");
+        });
+    });
+
+    test("Return status code 200 and display 2 articles according to query limit", () => {
+      return request(app)
+        .get("/api/articles?limit=2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).toBe(2);
+        });
+    });
+
+    test("Return status code 200 and display articles with an offset based on the page number", () => {
+      return request(app)
+        .get("/api/articles?limit4&sort_by=article_id&order_by=ASC&p=2")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].article_id).tobe(5);
+        });
+    });
+  });
+  describe("/api/articles/:article_id/comments", () => {
+    describe("GET", () => {
+      test("Return status code 200 with an array of comments for the given article id", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(typeof body).toBe("object");
+            body.comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                body: expect.any(String),
+                author: expect.any(String),
+              });
+            });
+          });
+      });
+
+      test("Return status code 404 if article_id is valid but not found", () => {
+        return request(app)
+          .get("/api/articles/3000/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not found");
+          });
+      });
+    });
+
+    describe("POST", () => {
+      test("Return status code 201 with the new comment", () => {
+        const newComment = { username: "butter_bridge", body: "a new comment" };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment).toEqual({
               comment_id: expect.any(Number),
               votes: expect.any(Number),
               created_at: expect.any(String),
-              body: expect.any(String),
-              author: expect.any(String),
+              body: "a new comment",
+              author: "butter_bridge",
+              article_id: 1,
             });
           });
-        });
-    });
-
-    test("Return status code 404 if article_id is valid but not found", () => {
-      return request(app)
-        .get("/api/articles/3000/comments")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
-        });
-    });
-  });
-
-  describe("POST", () => {
-    test("Return status code 201 with the new comment", () => {
-      const newComment = { username: "butter_bridge", body: "a new comment" };
-      return request(app)
-        .post("/api/articles/1/comments")
-        .send(newComment)
-        .expect(201)
-        .then(({ body }) => {
-          expect(body.comment).toEqual({
-            comment_id: expect.any(Number),
-            votes: expect.any(Number),
-            created_at: expect.any(String),
-            body: "a new comment",
-            author: "butter_bridge",
-            article_id: 1,
+      });
+      test("Return status code 404 if article_id is valid but not found", () => {
+        return request(app)
+          .post("/api/articles/3000/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not found");
           });
-        });
-    });
-    test("Return status code 404 if article_id is valid but not found", () => {
-      return request(app)
-        .post("/api/articles/3000/comments")
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
-        });
-    });
+      });
 
-    test("Return status code 404 if username is valid but not found", () => {
-      const newComment = { username: "masaala", body: "a new comment" };
-      return request(app)
-        .post("/api/articles/1/comments")
-        .send(newComment)
-        .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Not found");
-        });
+      test("Return status code 404 if username is valid but not found", () => {
+        const newComment = { username: "masaala", body: "a new comment" };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Not found");
+          });
+      });
     });
   });
 });

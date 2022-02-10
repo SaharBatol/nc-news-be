@@ -50,10 +50,11 @@ exports.getArticles = (req, res, next) => {
   const orderBy = req.query.order_by;
   const topic = req.query.topic;
   const limit = req.query.limit;
+  const page = req.query.p;
   return checkTopicExists(topic)
     .then((exists) => {
       if (exists) {
-        return selectArticles(sortBy, orderBy, topic, limit).then(
+        return selectArticles(sortBy, orderBy, topic, limit, page).then(
           (articles) => {
             res.status(200).send({ articles });
           }

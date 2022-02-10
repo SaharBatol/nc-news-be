@@ -29,7 +29,8 @@ exports.selectArticles = (
   sortBy = "created_at",
   orderBy = "DESC",
   topic,
-  limit = 10
+  limit = 10,
+  page = 1
 ) => {
   let topicCondition = false;
   if (!topic) {
@@ -55,6 +56,8 @@ exports.selectArticles = (
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
+  let startPage = (page - 1) * limit;
+
   return db
     .query(
       `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
@@ -64,7 +67,8 @@ exports.selectArticles = (
       WHERE ${topicCondition} OR topic = $1
       GROUP BY articles.article_id
       ORDER BY ${sortBy} ${orderBy}
-      LIMIT ${limit};`,
+      LIMIT ${limit}
+      OFFSET ${startPage};`,
       [topic]
     )
     .then(({ rows }) => {
